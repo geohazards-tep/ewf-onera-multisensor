@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="us-ascii"?>
+<application xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" id="application">
+  <jobTemplates>
+    <jobTemplate id="data_product">
+      <streamingExecutable>/application/node_data_product/run.py</streamingExecutable>
+    </jobTemplate>
+    <jobTemplate id="preparation_coregistration">
+      <streamingExecutable>/application/node_preparation_coregistration/run.py</streamingExecutable>
+    </jobTemplate>
+      <defaultJobconf>
+        <property id="ciop.job.max.tasks">1</property>
+      </defaultJobconf>
+    <jobTemplate id="gefolki">
+      <streamingExecutable>/application/node_gefolki/run.py</streamingExecutable>
+    </jobTemplate>
+    <jobTemplate id="reactiv">
+      <streamingExecutable>/application/node_reactiv/run.py</streamingExecutable>
+        <!-- By setting this property with value 1, the node will act as 'aggregator.
+             That is only one instance of the node will run on the cluster -->
+      <defaultJobconf>
+        <property id="ciop.job.max.tasks">1</property>
+      </defaultJobconf>
+    </jobTemplate>
+  </jobTemplates>
+    <workflow id="workflow" title="Simple workflow" abstract="Simple workflow based on the DCS Python archetype">
+    <workflowVersion>1.0</workflowVersion>
+    <node id="node_data_product">
+      <job id="data_product"/>
+      <sources>
+        <source id="source" title="Simple string sources" abstract="List of comma-separated strings" refid="string:list" scope="runtime">input-1,input-2,input-3</source>
+      </sources>
+    </node>
+    <node id="node_preparation_coregistration">
+      <job id="preparation_coregistration"/>
+      <sources>
+        <source refid="wf:node">node_data_product</source>
+      </sources>
+    </node>
+    <node id="node_gefolki">
+      <job id="gefolki"/>
+      <sources>
+        <source refid="wf:node">node_preparation_coregistration</source>
+      </sources>
+    </node>
+    <node id="node_reactiv">
+      <job id="reactiv"/>
+      <sources>
+        <source refid="wf:node">node_gefolki</source>
+      </sources>
+    </node>
+</workflow>
+</application>
